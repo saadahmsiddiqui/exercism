@@ -13,6 +13,9 @@ pub fn sublist<T: PartialEq>(_first_list: &[T], _second_list: &[T]) -> Compariso
     if _first_list.len() != 0 && _second_list.len() == 0 {
         return Comparison::Superlist;
     }
+    if _first_list.len() == 0 && _second_list.len() == 0 {
+        return Comparison::Equal;
+    }
 
     let mut _second_list_iterator = 0;
 
