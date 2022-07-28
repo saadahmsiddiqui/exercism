@@ -31,13 +31,35 @@ pub fn parse_lines(match_results: &str) -> Vec<String> {
     return all_lines;
 }
 
+pub fn parse_semi_color_separated_values(raw_str: String) -> Vec<String> {
+    let mut values_vec: Vec<String> = Vec::new();
+    let as_bytes = raw_str.as_bytes();
+
+    let mut index: usize = 0;
+    for i in 0..as_bytes.len() {
+        if as_bytes[i] == b';' || as_bytes[i] == b'\n' {
+            let value = Vec::from(&raw_str[index..i]);
+            let utf8_str = String::from_utf8(value).unwrap();
+            values_vec.push(utf8_str);
+            index = i + 1;
+        }
+    }
+
+    return values_vec;
+}
+
 
 pub fn tally(match_results: &str) -> String {
     let lines = parse_lines(match_results);
 
     for line in lines.iter() {
-        print!("{}", &line);
+        println!("{}\n", &line);
+        let vals = parse_semi_color_separated_values(line.clone());
+        for val in vals.iter() {
+            print!("{}\n", &val);
+        }
     }
+
 
     unimplemented!(
         "Given the result of the played matches '{}' return a properly formatted tally table string.",
