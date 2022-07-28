@@ -38,7 +38,7 @@ impl Player {
             let new_mana = current_mana - mana_cost;
 
             self.mana = Some(new_mana);
-            return new_mana;
+            return mana_cost * 2;
         }
     }
 }
