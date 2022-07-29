@@ -40,8 +40,11 @@ pub fn parse_semi_color_separated_values(raw_str: String) -> Vec<String> {
     let mut index: usize = 0;
 
     for i in 0..as_bytes.len() {
-        if as_bytes[i] == b';' || as_bytes[i] == b'\n' || i + 1 == as_bytes.len() {
-            let value = Vec::from(&raw_str[index..i]);
+        if as_bytes[i] == b';' || i + 1 == as_bytes.len() {
+            let value = match i + 1 == as_bytes.len() {
+                true => Vec::from(&raw_str[index..i+1]),
+                false => Vec::from(&raw_str[index..i])
+            };
             let utf8_str = String::from_utf8(value).unwrap();
             values_vec.push(utf8_str);
             index = i + 1;
