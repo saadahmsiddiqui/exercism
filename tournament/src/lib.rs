@@ -1,8 +1,8 @@
-// enum MatchState {
-//     WIN,
-//     LOSE,
-//     DRAW
-// }
+enum MatchState {
+    WIN,
+    LOSE,
+    DRAW
+}
 
 // struct TallyStats {
 //     team_name: String,
@@ -52,6 +52,15 @@ pub fn parse_semi_color_separated_values(raw_str: String) -> Vec<String> {
     }
 
     return values_vec;
+}
+
+fn parse_match_result(match_result: &String) -> Option<MatchState> {
+    match match_result.as_str() {
+        "win" => Some(MatchState::WIN),
+        "loss" => Some(MatchState::LOSE),
+        "draw" => Some(MatchState::DRAW),
+        _ => None
+    }
 }
 
 
