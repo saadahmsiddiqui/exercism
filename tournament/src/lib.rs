@@ -22,8 +22,11 @@ pub fn parse_lines(match_results: &str) -> Vec<String> {
     let mut start_index: usize = 0;
 
     for index in 0..as_bytes.len() {
-        if as_bytes[index] == b'\n' || index + 1 == as_bytes.len() {
-            let line_vec = Vec::from(&as_bytes[start_index..index + 1]);
+        if as_bytes[index] == b'\n' {
+            let line_vec = match index == as_bytes.len() {
+                true => Vec::from(&as_bytes[start_index..]),
+                false => Vec::from(&as_bytes[start_index..index]),
+            };
             let line = String::from_utf8(line_vec).unwrap();
 
             all_lines.push(line);
@@ -41,9 +44,9 @@ pub fn parse_semi_color_separated_values(raw_str: String) -> Vec<String> {
     let mut index: usize = 0;
 
     for i in 0..as_bytes.len() {
-        if as_bytes[i] == b';' || i + 1 == as_bytes.len() {
-            let value = match i + 1 == as_bytes.len() {
-                true => Vec::from(&raw_str[index..i]),
+        if as_bytes[i] == b';' || i == as_bytes.len() - 1 {
+            let value = match i == as_bytes.len() - 1 {
+                true => Vec::from(&raw_str[index..]),
                 false => Vec::from(&raw_str[index..i]),
             };
             let utf8_str = String::from_utf8(value).unwrap();
@@ -56,12 +59,10 @@ pub fn parse_semi_color_separated_values(raw_str: String) -> Vec<String> {
 }
 
 fn parse_match_result(match_result: &String) -> Option<MatchState> {
-    println!("{} {}", match_result, match_result.eq("win"));
-
     if match_result.eq(&String::from("win")) {
         return Some(MatchState::WIN);
     }
-    
+
     if match_result.eq(&String::from("loss")) {
         return Some(MatchState::LOSE);
     }
@@ -84,49 +85,110 @@ pub fn tally(match_results: &str) -> String {
         let team_two_name = &vals[1];
         let team_one_state = parse_match_result(&vals[2]).unwrap();
 
-        match teams.iter_mut().find(|team| {
-            team.team_name.cmp(team_one_name) == Ordering::Equal
-                || team.team_name.cmp(team_two_name) == Ordering::Equal
-        }) {
+        match teams
+            .iter_mut()
+            .find(|team| team.team_name.cmp(team_one_name) == Ordering::Equal)
+        {
             Some(team) => {
                 team.matches_played = team.matches_played + 1;
 
-                if team_one_name.cmp(&team.team_name) == Ordering::Equal {
-                    match team_one_state {
-                        MatchState::WIN => {
-                            team.won = team.won + 1;
-                            team.points = team.points + 3;
-                        }
-                        MatchState::LOSE => {
-                            team.lost = team.lost + 1;
-                        }
-                        MatchState::DRAW => {
-                            team.drawn = team.drawn + 1;
-                        }
+                match team_one_state {
+                    MatchState::WIN => {
+                        team.won = team.won + 1;
+                        team.points = team.points + 3;
                     }
-                }
-                if team_two_name.cmp(&team.team_name) == Ordering::Equal {
-                    match team_one_state {
-                        MatchState::WIN => {
-                            team.lost = team.lost + 1;
-                        }
-                        MatchState::LOSE => {
-                            team.points = team.points + 3;
-                            team.won = team.won + 1;
-                        }
-                        MatchState::DRAW => {
-                            team.drawn = team.drawn + 1;
-                        }
+                    MatchState::LOSE => {
+                        team.lost = team.lost + 1;
+                    }
+                    MatchState::DRAW => {
+                        team.drawn = team.drawn + 1;
+                        team.points = team.points + 1;
                     }
                 }
             }
-            None => {}
+            None => {
+                let mut new_team_one = TallyStats {
+                    team_name: String::clone(&team_one_name),
+                    matches_played: 1,
+                    won: 0,
+                    drawn: 0,
+                    points: 0,
+                    lost: 0,
+                };
+
+                match team_one_state {
+                    MatchState::WIN => {
+                        new_team_one.won = new_team_one.won + 1;
+                        new_team_one.points = new_team_one.points + 3;
+                    }
+                    MatchState::LOSE => {
+                        new_team_one.lost = new_team_one.lost + 1;
+                    }
+                    MatchState::DRAW => {
+                        new_team_one.drawn = new_team_one.drawn + 1;
+                        new_team_one.points = new_team_one.points + 1;
+                    }
+                }
+
+                teams.push(new_team_one);
+            }
+        };
+
+        match teams
+            .iter_mut()
+            .find(|team| team.team_name.cmp(team_two_name) == Ordering::Equal)
+        {
+            Some(team) => {
+                team.matches_played = team.matches_played + 1;
+
+                match team_one_state {
+                    MatchState::WIN => {
+                        team.lost = team.lost + 1;
+                    }
+                    MatchState::LOSE => {
+                        team.won = team.won + 1;
+                        team.points = team.points + 3;
+                    }
+                    MatchState::DRAW => {
+                        team.drawn = team.drawn + 1;
+                        team.points = team.points + 1;
+                    }
+                }
+            }
+            None => {
+                let mut new_team_two = TallyStats {
+                    team_name: String::clone(&team_one_name),
+                    matches_played: 1,
+                    won: 0,
+                    drawn: 0,
+                    points: 0,
+                    lost: 0,
+                };
+
+                match team_one_state {
+                    MatchState::WIN => {
+                        new_team_two.lost = new_team_two.lost + 1;
+                    }
+                    MatchState::LOSE => {
+                        new_team_two.won = new_team_two.won + 1;
+                        new_team_two.points = new_team_two.points + 3;
+                    }
+                    MatchState::DRAW => {
+                        new_team_two.drawn = new_team_two.drawn + 1;
+                        new_team_two.points = new_team_two.points + 1;
+                    }
+                }
+
+                teams.push(new_team_two);
+            }
         };
     }
 
-
     for team in teams.iter() {
-        println!("Team: {} Points: {} Played: {} Won: {} Lost: {} Drawn: {}", &team.team_name, &team.points, &team.matches_played, &team.won, &team.lost, &team.drawn);
+        println!(
+            "Team: {} Points: {} Played: {} Won: {} Lost: {} Drawn: {}",
+            &team.team_name, &team.points, &team.matches_played, &team.won, &team.lost, &team.drawn
+        );
     }
 
     unimplemented!(
