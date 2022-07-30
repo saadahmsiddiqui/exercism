@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone)]
 enum MatchState {
     WIN,
@@ -13,6 +15,12 @@ struct TallyStats {
     points: u16,
 }
 
+impl fmt::Display for TallyStats {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // let name_spaces = String::from_utf8(Vec::from([32;31]));
+        writeln!(f, "{}|  {} |  {} |  {} |  {} |  {}", &self.team_name, self.matches_played, self.won, self.drawn, self.lost, self.points)
+    }
+}
 pub fn parse_lines(match_results: &str) -> Vec<String> {
     let mut all_lines: Vec<String> = Vec::new();
 
