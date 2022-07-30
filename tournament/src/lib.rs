@@ -17,11 +17,16 @@ struct TallyStats {
 
 impl fmt::Display for TallyStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // let name_spaces = String::from_utf8(Vec::from([32;31]));
+        let mut spaces = String::from("");
+
+        for _i in 0.. (31 - self.team_name.len()) {
+            spaces.push(' ');
+        }
+
         write!(
             f,
-            "{}|  {} |  {} |  {} |  {} |  {}",
-            &self.team_name, self.matches_played, self.won, self.drawn, self.lost, self.points
+            "{}{}|  {} |  {} |  {} |  {} |  {}",
+            &self.team_name, &spaces, self.matches_played, self.won, self.drawn, self.lost, self.points
         )
     }
 }
