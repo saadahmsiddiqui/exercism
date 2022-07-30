@@ -18,7 +18,11 @@ struct TallyStats {
 impl fmt::Display for TallyStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // let name_spaces = String::from_utf8(Vec::from([32;31]));
-        writeln!(f, "{}|  {} |  {} |  {} |  {} |  {}", &self.team_name, self.matches_played, self.won, self.drawn, self.lost, self.points)
+        write!(
+            f,
+            "{}|  {} |  {} |  {} |  {} |  {}",
+            &self.team_name, self.matches_played, self.won, self.drawn, self.lost, self.points
+        )
     }
 }
 pub fn parse_lines(match_results: &str) -> Vec<String> {
@@ -111,7 +115,6 @@ pub fn tally(match_results: &str) -> String {
     let mut teams: Vec<TallyStats> = Vec::new();
 
     for line in lines.iter() {
-
         let vals = parse_semi_color_separated_values(line.clone());
 
         let team_one_name = &vals[0];
@@ -165,14 +168,10 @@ pub fn tally(match_results: &str) -> String {
     }
 
     for team in teams.iter() {
-        println!(
-            "Team: {} Points: {} Played: {} Won: {} Lost: {} Drawn: {}",
-            &team.team_name, &team.points, &team.matches_played, &team.won, &team.lost, &team.drawn
-        );
+        println!("{}", &team);
     }
-    
-    println!();
 
+    println!();
 
     unimplemented!(
         "Given the result of the played matches '{}' return a properly formatted tally table string.",
