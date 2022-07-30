@@ -119,7 +119,7 @@ pub fn tally(match_results: &str) -> String {
             None => {
                 let mut new_team_one = TallyStats {
                     team_name: String::clone(&team_one_name),
-                    matches_played: 1,
+                    matches_played: 0,
                     won: 0,
                     drawn: 0,
                     points: 0,
@@ -141,7 +141,7 @@ pub fn tally(match_results: &str) -> String {
             None => {
                 let mut new_team_two = TallyStats {
                     team_name: String::clone(&team_two_name),
-                    matches_played: 1,
+                    matches_played: 0,
                     won: 0,
                     drawn: 0,
                     points: 0,
@@ -161,6 +161,9 @@ pub fn tally(match_results: &str) -> String {
             &team.team_name, &team.points, &team.matches_played, &team.won, &team.lost, &team.drawn
         );
     }
+    
+    println!();
+    
 
     unimplemented!(
         "Given the result of the played matches '{}' return a properly formatted tally table string.",
