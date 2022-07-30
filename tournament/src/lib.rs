@@ -136,25 +136,11 @@ pub fn tally(match_results: &str) -> String {
             .find(|team| team.team_name.eq(team_two_name))
         {
             Some(team) => {
-                team.matches_played = team.matches_played + 1;
-
-                match team_one_state {
-                    MatchState::WIN => {
-                        team.lost = team.lost + 1;
-                    }
-                    MatchState::LOSE => {
-                        team.won = team.won + 1;
-                        team.points = team.points + 3;
-                    }
-                    MatchState::DRAW => {
-                        team.drawn = team.drawn + 1;
-                        team.points = team.points + 1;
-                    }
-                }
+                update_team_team(team, team_two_state(team_one_state.clone()));
             }
             None => {
                 let mut new_team_two = TallyStats {
-                    team_name: String::clone(&team_one_name),
+                    team_name: String::clone(&team_two_name),
                     matches_played: 1,
                     won: 0,
                     drawn: 0,
