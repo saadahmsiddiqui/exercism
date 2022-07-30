@@ -1,5 +1,4 @@
-use std::cmp::Ordering;
-
+#[derive(Clone)]
 enum MatchState {
     WIN,
     LOSE,
@@ -74,6 +73,31 @@ fn parse_match_result(match_result: &String) -> Option<MatchState> {
     return None;
 }
 
+fn update_team_team(team_stats: &mut TallyStats, match_state: MatchState) {
+    team_stats.matches_played = team_stats.matches_played + 1;
+    match match_state {
+        MatchState::WIN => {
+            team_stats.won = team_stats.won + 1;
+            team_stats.points = team_stats.points + 3;
+        }
+        MatchState::LOSE => {
+            team_stats.lost = team_stats.lost + 1;
+        }
+        MatchState::DRAW => {
+            team_stats.drawn = team_stats.drawn + 1;
+            team_stats.points = team_stats.points + 1;
+        }
+    }
+}
+
+fn team_two_state(team_one_state: MatchState) -> MatchState {
+    match team_one_state {
+        MatchState::DRAW => MatchState::DRAW,
+        MatchState::LOSE => MatchState::WIN,
+        MatchState::WIN => MatchState::LOSE,
+    }
+}
+
 pub fn tally(match_results: &str) -> String {
     let lines = parse_lines(match_results);
     let mut teams: Vec<TallyStats> = Vec::new();
@@ -87,24 +111,10 @@ pub fn tally(match_results: &str) -> String {
 
         match teams
             .iter_mut()
-            .find(|team| team.team_name.cmp(team_one_name) == Ordering::Equal)
+            .find(|team| team.team_name.eq(team_one_name))
         {
             Some(team) => {
-                team.matches_played = team.matches_played + 1;
-
-                match team_one_state {
-                    MatchState::WIN => {
-                        team.won = team.won + 1;
-                        team.points = team.points + 3;
-                    }
-                    MatchState::LOSE => {
-                        team.lost = team.lost + 1;
-                    }
-                    MatchState::DRAW => {
-                        team.drawn = team.drawn + 1;
-                        team.points = team.points + 1;
-                    }
-                }
+                update_team_team(team, team_one_state.clone());
             }
             None => {
                 let mut new_team_one = TallyStats {
@@ -116,27 +126,14 @@ pub fn tally(match_results: &str) -> String {
                     lost: 0,
                 };
 
-                match team_one_state {
-                    MatchState::WIN => {
-                        new_team_one.won = new_team_one.won + 1;
-                        new_team_one.points = new_team_one.points + 3;
-                    }
-                    MatchState::LOSE => {
-                        new_team_one.lost = new_team_one.lost + 1;
-                    }
-                    MatchState::DRAW => {
-                        new_team_one.drawn = new_team_one.drawn + 1;
-                        new_team_one.points = new_team_one.points + 1;
-                    }
-                }
-
+                update_team_team(&mut new_team_one, team_one_state.clone());
                 teams.push(new_team_one);
             }
         };
 
         match teams
             .iter_mut()
-            .find(|team| team.team_name.cmp(team_two_name) == Ordering::Equal)
+            .find(|team| team.team_name.eq(team_two_name))
         {
             Some(team) => {
                 team.matches_played = team.matches_played + 1;
@@ -165,19 +162,7 @@ pub fn tally(match_results: &str) -> String {
                     lost: 0,
                 };
 
-                match team_one_state {
-                    MatchState::WIN => {
-                        new_team_two.lost = new_team_two.lost + 1;
-                    }
-                    MatchState::LOSE => {
-                        new_team_two.won = new_team_two.won + 1;
-                        new_team_two.points = new_team_two.points + 3;
-                    }
-                    MatchState::DRAW => {
-                        new_team_two.drawn = new_team_two.drawn + 1;
-                        new_team_two.points = new_team_two.points + 1;
-                    }
-                }
+                update_team_team(&mut new_team_two, team_two_state(team_one_state.clone()));
 
                 teams.push(new_team_two);
             }
