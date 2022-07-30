@@ -21,8 +21,8 @@ pub fn parse_lines(match_results: &str) -> Vec<String> {
     let mut start_index: usize = 0;
 
     for index in 0..as_bytes.len() {
-        if as_bytes[index] == b'\n' {
-            let line_vec = match index == as_bytes.len() {
+        if as_bytes[index] == b'\n' || index == as_bytes.len() - 1 {
+            let line_vec = match index == as_bytes.len() - 1 {
                 true => Vec::from(&as_bytes[start_index..]),
                 false => Vec::from(&as_bytes[start_index..index]),
             };
@@ -103,6 +103,7 @@ pub fn tally(match_results: &str) -> String {
     let mut teams: Vec<TallyStats> = Vec::new();
 
     for line in lines.iter() {
+
         let vals = parse_semi_color_separated_values(line.clone());
 
         let team_one_name = &vals[0];
@@ -163,7 +164,7 @@ pub fn tally(match_results: &str) -> String {
     }
     
     println!();
-    
+
 
     unimplemented!(
         "Given the result of the played matches '{}' return a properly formatted tally table string.",
