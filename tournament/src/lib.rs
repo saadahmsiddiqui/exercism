@@ -1,4 +1,4 @@
-use std::fmt;
+use std::fmt::{self, Display, format};
 
 #[derive(Clone)]
 enum MatchState {
@@ -30,6 +30,23 @@ impl fmt::Display for TallyStats {
         )
     }
 }
+
+
+impl TallyStats {
+    fn to_string(&self) -> String {
+        let mut spaces = String::from("");
+
+        for _i in 0.. (31 - self.team_name.len()) {
+            spaces.push(' ');
+        }
+
+        let str = format!("{}{}|  {} |  {} |  {} |  {} |  {}",
+        &self.team_name, &spaces, self.matches_played, self.won, self.drawn, self.lost, self.points);
+
+        return str;
+    }
+}
+
 pub fn parse_lines(match_results: &str) -> Vec<String> {
     let mut all_lines: Vec<String> = Vec::new();
 
@@ -115,6 +132,10 @@ fn team_two_state(team_one_state: MatchState) -> MatchState {
     }
 }
 
+fn table_header() -> String {
+    return String::from("Team                           | MP |  W |  D |  L |  P");
+}
+
 pub fn tally(match_results: &str) -> String {
     let lines = parse_lines(match_results);
     let mut teams: Vec<TallyStats> = Vec::new();
@@ -172,14 +193,13 @@ pub fn tally(match_results: &str) -> String {
         };
     }
 
-    for team in teams.iter() {
-        println!("{}", &team);
+    let mut table_str = table_header();
+
+    for team_idx in 0..teams.len() {
+        let team_str = teams[team_idx].to_string();
+        let sttr = format!("\n{}", team_str.as_str());
+        table_str.push_str(sttr.as_str());
     }
 
-    println!();
-
-    unimplemented!(
-        "Given the result of the played matches '{}' return a properly formatted tally table string.",
-        match_results
-    );
+    return table_str;
 }
