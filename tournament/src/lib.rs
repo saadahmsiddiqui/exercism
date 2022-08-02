@@ -1,4 +1,7 @@
-use std::fmt::{self, Display, format};
+use std::{
+    cmp::Ordering,
+    fmt::{self},
+};
 
 #[derive(Clone)]
 enum MatchState {
@@ -6,6 +9,8 @@ enum MatchState {
     LOSE,
     DRAW,
 }
+
+#[derive(Eq)]
 struct TallyStats {
     team_name: String,
     matches_played: u16,
@@ -15,33 +20,69 @@ struct TallyStats {
     points: u16,
 }
 
+impl PartialEq for TallyStats {
+    fn eq(&self, other: &Self) -> bool {
+        return self.team_name.eq(&other.team_name)
+            && self.matches_played == other.matches_played
+            && self.won == other.won
+            && self.drawn == other.drawn
+            && self.lost == other.lost
+            && self.points == other.points;
+    }
+}
+
+impl PartialOrd for TallyStats {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.team_name.cmp(&&other.team_name))
+    }
+}
+
+impl Ord for TallyStats {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.team_name.cmp(&&other.team_name)
+    }
+}
+
 impl fmt::Display for TallyStats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut spaces = String::from("");
 
-        for _i in 0.. (31 - self.team_name.len()) {
+        for _i in 0..(31 - self.team_name.len()) {
             spaces.push(' ');
         }
 
         write!(
             f,
             "{}{}|  {} |  {} |  {} |  {} |  {}",
-            &self.team_name, &spaces, self.matches_played, self.won, self.drawn, self.lost, self.points
+            &self.team_name,
+            &spaces,
+            self.matches_played,
+            self.won,
+            self.drawn,
+            self.lost,
+            self.points
         )
     }
 }
-
 
 impl TallyStats {
     fn to_string(&self) -> String {
         let mut spaces = String::from("");
 
-        for _i in 0.. (31 - self.team_name.len()) {
+        for _i in 0..(31 - self.team_name.len()) {
             spaces.push(' ');
         }
 
-        let str = format!("{}{}|  {} |  {} |  {} |  {} |  {}",
-        &self.team_name, &spaces, self.matches_played, self.won, self.drawn, self.lost, self.points);
+        let str = format!(
+            "{}{}|  {} |  {} |  {} |  {} |  {}",
+            &self.team_name,
+            &spaces,
+            self.matches_played,
+            self.won,
+            self.drawn,
+            self.lost,
+            self.points
+        );
 
         return str;
     }
@@ -192,6 +233,8 @@ pub fn tally(match_results: &str) -> String {
             }
         };
     }
+
+    teams.sort();
 
     let mut table_str = table_header();
 
