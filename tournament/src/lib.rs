@@ -33,13 +33,21 @@ impl PartialEq for TallyStats {
 
 impl PartialOrd for TallyStats {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.team_name.cmp(&&other.team_name))
+        match self.points.cmp(&other.points) {
+            Ordering::Greater => Some(Ordering::Less),
+            Ordering::Less => Some(Ordering::Greater),
+            Ordering::Equal => Some(self.team_name.cmp(&other.team_name)),
+        }
     }
 }
 
 impl Ord for TallyStats {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.team_name.cmp(&&other.team_name)
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.points.cmp(&other.points) {
+            Ordering::Greater => Ordering::Less,
+            Ordering::Less => Ordering::Greater,
+            Ordering::Equal => self.team_name.cmp(&other.team_name),
+        }
     }
 }
 
