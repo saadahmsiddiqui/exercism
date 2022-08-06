@@ -16,5 +16,10 @@ pub fn can_construct_note(magazine: &Vec<&str>, note: &Vec<&str>) -> bool {
             megazine_map.insert(w, 1);
         }
     }
+
+    for (key, val) in megazine_map.iter() {
+        println!("{} {}", key, *val);
+    }
+    
     unimplemented!()
 }
