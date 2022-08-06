@@ -5,8 +5,10 @@
 use std::collections::HashMap;
 
 pub fn can_construct_note(magazine: &Vec<&str>, note: &Vec<&str>) -> bool {
+    let megazine_map: HashMap<String, u8> = HashMap::new();
+
     for word in magazine {
-        println!("{}", word);
+
     }
     unimplemented!()
 }
