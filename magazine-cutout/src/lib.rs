@@ -30,10 +30,10 @@ pub fn can_construct_note(magazine: &Vec<&str>, note: &Vec<&str>) -> bool {
                     note_words -= 1;
                     decrease_count = true;
                 }
-            },
-            None => return false
+            }
+            None => return false,
         }
-        
+
         if remove_key {
             megazine_map.remove_entry(&note_w);
         }
@@ -48,5 +48,4 @@ pub fn can_construct_note(magazine: &Vec<&str>, note: &Vec<&str>) -> bool {
     }
 
     return false;
-
 }
