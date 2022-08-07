@@ -9,16 +9,33 @@ pub enum Direction {
     West,
 }
 
-pub struct Robot;
+pub struct Robot {
+    x: i32,
+    y: i32,
+    direction: Direction
+}
 
 impl Robot {
     pub fn new(x: i32, y: i32, d: Direction) -> Self {
-        unimplemented!("Create a robot at (x, y) ({}, {}) facing {:?}", x, y, d,)
+        Robot { x: x, y: y, direction: d }
     }
 
     #[must_use]
     pub fn turn_right(self) -> Self {
-        unimplemented!()
+        match self.direction {
+            Direction::North => {
+                return Robot { x: self.x, y: self.y, direction: Direction::East }
+            },
+            Direction::South => {
+                return Robot { x: self.x, y: self.y, direction: Direction::West }
+            },
+            Direction::East => {
+                return Robot { x: self.x, y: self.y, direction: Direction::South }
+            },
+            Direction::West => {
+                return Robot { x: self.x, y: self.y, direction: Direction::North }
+            }
+        }
     }
 
     #[must_use]
