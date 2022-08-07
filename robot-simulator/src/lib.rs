@@ -12,28 +12,48 @@ pub enum Direction {
 pub struct Robot {
     x: i32,
     y: i32,
-    direction: Direction
+    direction: Direction,
 }
 
 impl Robot {
     pub fn new(x: i32, y: i32, d: Direction) -> Self {
-        Robot { x: x, y: y, direction: d }
+        Robot {
+            x: x,
+            y: y,
+            direction: d,
+        }
     }
 
     #[must_use]
     pub fn turn_right(self) -> Self {
         match self.direction {
             Direction::North => {
-                return Robot { x: self.x, y: self.y, direction: Direction::East }
-            },
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::East,
+                }
+            }
             Direction::South => {
-                return Robot { x: self.x, y: self.y, direction: Direction::West }
-            },
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::West,
+                }
+            }
             Direction::East => {
-                return Robot { x: self.x, y: self.y, direction: Direction::South }
-            },
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::South,
+                }
+            }
             Direction::West => {
-                return Robot { x: self.x, y: self.y, direction: Direction::North }
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::North,
+                }
             }
         }
     }
