@@ -106,7 +106,7 @@ impl Robot {
     }
 
     pub fn position(&self) -> (i32, i32) {
-        unimplemented!()
+        (self.x, self.y)
     }
 
     pub fn direction(&self) -> &Direction {
