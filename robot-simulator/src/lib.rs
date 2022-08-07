@@ -60,7 +60,36 @@ impl Robot {
 
     #[must_use]
     pub fn turn_left(self) -> Self {
-        unimplemented!()
+        match self.direction {
+            Direction::North => {
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::West,
+                }
+            }
+            Direction::South => {
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::East,
+                }
+            }
+            Direction::East => {
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::North,
+                }
+            }
+            Direction::West => {
+                return Robot {
+                    x: self.x,
+                    y: self.y,
+                    direction: Direction::South,
+                }
+            }
+        }
     }
 
     #[must_use]
