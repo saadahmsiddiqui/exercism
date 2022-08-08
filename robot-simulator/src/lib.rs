@@ -96,10 +96,14 @@ impl Robot {
     pub fn advance(self) -> Self {
         match self.direction {
             Direction::East => {
-                return Robot { x: self.x, y: self.y, direction: self.direction }
+                let mut x = self.x;
+                x += 1;
+                return Robot { x: x, y: self.y, direction: self.direction }
             },
             Direction::West => {
-                return Robot { x: self.x, y: self.y, direction: self.direction }
+                let mut x = self.x;
+                x -= 1;
+                return Robot { x: x, y: self.y, direction: self.direction }
             },
             Direction::North => {
                 let mut y = self.y;
