@@ -144,6 +144,6 @@ impl Robot {
     }
 
     pub fn direction(&self) -> &Direction {
-        unimplemented!()
+        &self.direction
     }
 }
