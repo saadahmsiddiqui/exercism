@@ -1,7 +1,7 @@
 // The code below is a stub. Just enough to satisfy the compiler.
 // In order to pass the tests you can add-to or change any of this code.
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Direction {
     North,
     East,
@@ -94,15 +94,41 @@ impl Robot {
 
     #[must_use]
     pub fn advance(self) -> Self {
-        unimplemented!()
+        match self.direction {
+            Direction::East => {
+                return Robot { x: self.x, y: self.y, direction: self.direction }
+            },
+            Direction::West => {
+                return Robot { x: self.x, y: self.y, direction: self.direction }
+            },
+            Direction::North => {
+                return Robot { x: self.x, y: self.y, direction: self.direction }
+            },
+            Direction::South => {
+                return Robot { x: self.x, y: self.y, direction: self.direction }
+            },
+        }
     }
 
     #[must_use]
     pub fn instructions(self, instructions: &str) -> Self {
-        unimplemented!(
-            "Follow the given sequence of instructions: {}",
-            instructions
-        )
+        for command in instructions.as_bytes().iter() {
+            let changed_direction = Robot {x: self.x, y: self.y, direction: self.direction.clone() };
+
+            if *command == b'L' {
+                return changed_direction.turn_left();
+            }
+
+            if *command == b'R' {
+                return changed_direction.turn_right();
+            }
+
+            if *command == b'A' {
+                return changed_direction.advance();
+            }
+        }
+
+        return self;
     }
 
     pub fn position(&self) -> (i32, i32) {
