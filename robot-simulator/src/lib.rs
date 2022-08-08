@@ -102,10 +102,14 @@ impl Robot {
                 return Robot { x: self.x, y: self.y, direction: self.direction }
             },
             Direction::North => {
-                return Robot { x: self.x, y: self.y, direction: self.direction }
+                let mut y = self.y;
+                y += 1;
+                return Robot { x: self.x, y: y, direction: self.direction }
             },
             Direction::South => {
-                return Robot { x: self.x, y: self.y, direction: self.direction }
+                let mut y = self.y;
+                y -= 1;
+                return Robot { x: self.x, y: y, direction: self.direction }
             },
         }
     }
