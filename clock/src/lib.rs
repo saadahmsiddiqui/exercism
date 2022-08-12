@@ -1,6 +1,4 @@
-pub struct Clock;
-
-struct Clock {
+pub struct Clock {
     hours: u32,
     minutes: u32
 }
