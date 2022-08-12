@@ -1,8 +1,8 @@
 pub struct Clock;
 
 struct Clock {
-    hours: u32;
-    minutes: u32;
+    hours: u32,
+    minutes: u32
 }
 
 impl Clock {
