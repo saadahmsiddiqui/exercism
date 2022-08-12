@@ -1,5 +1,10 @@
 pub struct Clock;
 
+struct Clock {
+    hours: u32;
+    minutes: u32;
+}
+
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
         unimplemented!(
