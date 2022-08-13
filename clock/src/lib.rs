@@ -79,6 +79,8 @@ impl Clock {
             if minutes_to_rewind > 59 {
                 curr_hours = add_hour_safe(curr_hours, - (minutes_to_rewind / 60));
                 carry_over_minutes = minutes_to_rewind % 60
+            } else {
+                carry_over_minutes = minutes_to_rewind;
             }
 
             if cl_minutes - carry_over_minutes < 0 {
