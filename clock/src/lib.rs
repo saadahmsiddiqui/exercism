@@ -33,69 +33,58 @@ impl fmt::Debug for Clock {
     }
 }
 
+fn add_hour_safe(current_hours: i32, hours: i32) -> i32 {
+    match hours > 0 {
+        true => (current_hours + hours) % 24,
+        false => {
+            let mut clock_hours = current_hours;
+            let mut hours_to_remove = hours.abs();
+            while hours_to_remove > 0 {
+                clock_hours = if clock_hours == 0 { 24 } else { clock_hours - 1 };
+                hours_to_remove -= 1;
+            }
+
+            clock_hours
+        }
+    }    
+}
+
+
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let start_hours = match hours > 0 {
-            true => 0,
-            false => 24
-        };
-
-        let mut clock_hours = start_hours;
-        let mut clock_hours = if hours > 0 {
-            let mut hour_counter = hours;
-
-            while hour_counter > 0 {
-                if clock_hours == 24 { clock_hours = 0; } else { clock_hours += 1; }
-                hour_counter -= 1;
-            }
-
-            clock_hours
-        } else {
-            let mut hour_counter = hours.abs();
-
-            while hour_counter > 0 {
-                if clock_hours == 0 { clock_hours = 24; } else { clock_hours -= 1; }
-                hour_counter -=1;
-            }
-
-            clock_hours
-        };
-
-        let clock_minutes = if minutes > 0 {
-            if minutes > 59 {
-                let mut hours_to_add = minutes / 60;
-
-                while hours_to_add > 0 {
-                    if clock_hours == 24 { clock_hours = 0; } else { clock_hours += 1; }
-                    hours_to_add -= 1;
-                }
-
-                minutes % 60
-            } else {
-                minutes
-            }
-        } else {
-            let minutes_to_remove = minutes.abs();
-
-            if minutes_to_remove > 59 {
-                let mut hours_to_remove = minutes_to_remove / 60;
-
-                while hours_to_remove > 0 {
-                    if clock_hours == 0 { clock_hours = 24; } else { clock_hours -= 1; }
-                    hours_to_remove -= 1;
-                }
-
-                60 - (minutes_to_remove % 60)                
-            } else {
-                clock_hours = clock_hours - 1;
-                60 - minutes_to_remove
-            }
-        };
-
-        Clock { hours: clock_hours, minutes: clock_minutes }
+        let mut clock = Clock { hours: 0, minutes: 0 };
+        clock = clock.add_hours(hours);
+        clock = clock.add_minutes(minutes);
+        clock
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        unimplemented!("Add {} minutes to existing Clock time", minutes);
+        let mut curr_hours = self.hours;
+        let mut cl_minutes = self.minutes;
+
+        if minutes > 0 {
+            let remaining_minutes;
+
+            if minutes > 59 {
+                curr_hours = add_hour_safe(curr_hours, minutes / 60);
+                remaining_minutes = minutes % 60;
+            } else {
+                remaining_minutes = minutes;
+            }
+
+            if cl_minutes + remaining_minutes > 59 {
+                cl_minutes = (cl_minutes + remaining_minutes) % 60;
+                curr_hours = add_hour_safe(curr_hours, 1);
+            } else {
+                cl_minutes = cl_minutes + remaining_minutes;
+            }
+        }
+
+        return Clock { hours: curr_hours, minutes: cl_minutes };
+    }
+
+    pub fn add_hours(&self, hours: i32) -> Self {
+        let new_hours = add_hour_safe(self.hours, hours);
+        Clock { hours: new_hours, minutes: self.minutes }
     }
 }
