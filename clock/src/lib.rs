@@ -37,14 +37,8 @@ fn add_hour_safe(current_hours: i32, hours: i32) -> i32 {
     match hours > 0 {
         true => (current_hours + hours) % 24,
         false => {
-            let mut clock_hours = current_hours;
-            let mut hours_to_remove = hours.abs();
-            while hours_to_remove > 0 {
-                clock_hours = if clock_hours == 0 { 24 } else { clock_hours - 1 };
-                hours_to_remove -= 1;
-            }
-
-            clock_hours
+            let carried = hours.abs() % 24;
+            (current_hours - carried + 24) % 24
         }
     }    
 }
@@ -77,6 +71,22 @@ impl Clock {
                 curr_hours = add_hour_safe(curr_hours, 1);
             } else {
                 cl_minutes = cl_minutes + remaining_minutes;
+            }
+        } else {
+            let minutes_to_rewind = minutes.abs();
+            let mut carry_over_minutes = 0;
+            
+            if minutes_to_rewind > 59 {
+                curr_hours = add_hour_safe(curr_hours, - (minutes_to_rewind / 60));
+                carry_over_minutes = minutes_to_rewind % 60
+            }
+
+            if cl_minutes - carry_over_minutes < 0 {
+                curr_hours = add_hour_safe(curr_hours, - 1);
+                let diff = (cl_minutes - carry_over_minutes).abs();
+                cl_minutes = 60 - diff;
+            } else {
+                cl_minutes = cl_minutes - carry_over_minutes;
             }
         }
 
