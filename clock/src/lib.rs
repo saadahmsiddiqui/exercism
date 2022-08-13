@@ -74,7 +74,7 @@ impl Clock {
             }
         } else {
             let minutes_to_rewind = minutes.abs();
-            let mut carry_over_minutes = 0;
+            let carry_over_minutes;
             
             if minutes_to_rewind > 59 {
                 curr_hours = add_hour_safe(curr_hours, - (minutes_to_rewind / 60));
