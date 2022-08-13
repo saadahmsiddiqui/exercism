@@ -37,10 +37,7 @@ fn calculate_minute_udpate(clock: &Clock, minutes: i32) -> (i32, i32) {
     let mut current_clock_hours = clock.hours;
     let mut current_clock_minutes = clock.minutes;
 
-    let remaining_minutes = match minutes > 0 {
-        true => minutes % 60,
-        false => minutes.abs() % 60,
-    };
+    let remaining_minutes = minutes.abs() % 60;
 
     let hours_to_add = minutes / 60;
     current_clock_hours = add_hour_safe(current_clock_hours, hours_to_add);
