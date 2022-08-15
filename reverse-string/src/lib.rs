@@ -1,7 +1,8 @@
-pub fn reverse(input: &str) -> String {
-    let as_bts = input.as_bytes();
-    let mut bts_vec = Vec::from(as_bts);
-    bts_vec.reverse();
+use unicode_segmentation::UnicodeSegmentation;
 
-    String::from_utf8(bts_vec).unwrap()
+pub fn reverse(input: &str) -> String {
+    let g = input.graphemes(true).collect::<Vec<&str>>();
+
+    // String::from_utf8(bts_vec).unwrap()
+    String::from("")
 }
