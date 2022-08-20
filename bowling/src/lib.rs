@@ -20,6 +20,9 @@ impl BowlingGame {
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
+        if self.frame + 1 > 10 {
+            return Err(Error::GameComplete);
+        }
         unimplemented!("Record that {} pins have been scored", pins);
     }
 
