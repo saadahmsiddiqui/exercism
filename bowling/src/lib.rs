@@ -2,6 +2,7 @@
 pub enum Error {
     NotEnoughPinsLeft,
     GameComplete,
+    InvalidNumberOfPins
 }
 struct FrameHistory {
     first_turn_pins_knocked: u8,
@@ -20,10 +21,35 @@ impl BowlingGame {
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
+        if pins > 10 {
+            return Err(Error::InvalidNumberOfPins);            
+        }
+
         if self.frame + 1 > 10 {
             return Err(Error::GameComplete);
         }
-        unimplemented!("Record that {} pins have been scored", pins);
+
+        if self.frame == 0 && self.frame_hitory.len() == 0 {
+            let is_strike = pins == 10;
+
+            let first_frame = FrameHistory {
+                first_turn_pins_knocked: pins as u8,
+                second_turn_pins_knoced: 0,
+                is_strike,
+                is_spare: false
+            };
+
+            self.frame_hitory.push(first_frame);
+            if is_strike {
+                self.frame = self.frame + 1;
+            }
+        }
+
+        if self.frame == 0 && self.frame_hitory.len() != 0 {
+            let &mut first_frame = self.frame_hitory.get(self.frame as usize).as_mut().unwrap();
+        }
+        
+        unimplemented!("Return the score if the game is complete, or None if not.");
     }
 
     pub fn score(&self) -> Option<u16> {
