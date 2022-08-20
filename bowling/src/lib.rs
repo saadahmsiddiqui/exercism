@@ -3,12 +3,20 @@ pub enum Error {
     NotEnoughPinsLeft,
     GameComplete,
 }
-
-pub struct BowlingGame {}
+struct FrameHistory {
+    first_turn_pins_knocked: u8,
+    second_turn_pins_knoced: u8,
+    is_spare: bool,
+    is_strike: bool,
+}
+pub struct BowlingGame {
+    frame: u8,
+    frame_hitory: Vec<FrameHistory>,
+}
 
 impl BowlingGame {
     pub fn new() -> Self {
-        unimplemented!();
+        BowlingGame { frame: 0, frame_hitory: Vec::<FrameHistory>::with_capacity(10) }
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
