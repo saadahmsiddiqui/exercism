@@ -6,9 +6,18 @@ pub enum Error {
 }
 struct FrameHistory {
     first_turn_pins_knocked: u8,
-    second_turn_pins_knoced: u8,
+    second_turn_pins_knocked: u8,
     is_spare: bool,
     is_strike: bool,
+}
+
+fn new_empty_frame_history() -> FrameHistory {
+    return FrameHistory {
+        first_turn_pins_knocked: 0,
+        second_turn_pins_knocked: 0,
+        is_strike: false,
+        is_spare: false,
+    };
 }
 pub struct BowlingGame {
     frame: u8,
@@ -31,14 +40,9 @@ impl BowlingGame {
 
         if self.frame == 0 && self.frame_hitory.len() == 0 {
             let is_strike = pins == 10;
-
-            let first_frame = FrameHistory {
-                first_turn_pins_knocked: pins as u8,
-                second_turn_pins_knoced: 0,
-                is_strike,
-                is_spare: false
-            };
-
+            let mut first_frame = new_empty_frame_history();
+            first_frame.is_strike = is_strike;
+            first_frame.first_turn_pins_knocked = pins as u8;
             self.frame_hitory.push(first_frame);
             if is_strike {
                 self.frame = self.frame + 1;
@@ -46,7 +50,12 @@ impl BowlingGame {
         }
 
         if self.frame == 0 && self.frame_hitory.len() != 0 {
-            let &mut first_frame = self.frame_hitory.get(self.frame as usize).as_mut().unwrap();
+            self.frame_hitory[self.frame as usize].is_spare = true;
+            if self.frame_hitory[self.frame as usize].first_turn_pins_knocked + pins as u8 == 10 {
+                self.frame_hitory[self.frame as usize].is_spare = false;
+            }
+            self.frame_hitory[self.frame as usize].second_turn_pins_knocked = pins as u8;
+            self.frame = self.frame + 1;
         }
         
         unimplemented!("Return the score if the game is complete, or None if not.");
