@@ -2,7 +2,7 @@
 pub enum Error {
     NotEnoughPinsLeft,
     GameComplete,
-    InvalidNumberOfPins
+    InvalidNumberOfPins,
 }
 struct FrameHistory {
     first_turn_pins_knocked: i8,
@@ -26,12 +26,15 @@ pub struct BowlingGame {
 
 impl BowlingGame {
     pub fn new() -> Self {
-        BowlingGame { frame: 0, frame_history: Vec::<FrameHistory>::with_capacity(10) }
+        BowlingGame {
+            frame: 0,
+            frame_history: Vec::<FrameHistory>::with_capacity(10),
+        }
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
         if pins > 10 {
-            return Err(Error::InvalidNumberOfPins);            
+            return Err(Error::InvalidNumberOfPins);
         }
 
         if self.frame + 1 >= 10 {
@@ -50,7 +53,9 @@ impl BowlingGame {
                 }
             } else {
                 self.frame_history[self.frame as usize].is_spare = false;
-                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8 == 10 {
+                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8
+                    == 10
+                {
                     self.frame_history[self.frame as usize].is_spare = true;
                 }
                 self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
@@ -58,7 +63,8 @@ impl BowlingGame {
             }
         } else {
             let last_frame = (self.frame - 1) as usize;
-            let is_complete_last_frame = self.frame_history[last_frame].second_turn_pins_knocked != -1;
+            let is_complete_last_frame =
+                self.frame_history[last_frame].second_turn_pins_knocked != -1;
             if is_complete_last_frame {
                 let mut new_current_frame = new_empty_frame_history();
                 new_current_frame.is_strike = pins == 10;
@@ -67,7 +73,9 @@ impl BowlingGame {
                 self.frame_history[self.frame as usize] = new_current_frame;
             } else {
                 self.frame_history[self.frame as usize].is_spare = false;
-                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8 == 10 {
+                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8
+                    == 10
+                {
                     self.frame_history[self.frame as usize].is_spare = true;
                 }
                 self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
