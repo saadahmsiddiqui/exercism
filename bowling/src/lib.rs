@@ -5,16 +5,16 @@ pub enum Error {
     InvalidNumberOfPins
 }
 struct FrameHistory {
-    first_turn_pins_knocked: u8,
-    second_turn_pins_knocked: u8,
+    first_turn_pins_knocked: i8,
+    second_turn_pins_knocked: i8,
     is_spare: bool,
     is_strike: bool,
 }
 
 fn new_empty_frame_history() -> FrameHistory {
     return FrameHistory {
-        first_turn_pins_knocked: 0,
-        second_turn_pins_knocked: 0,
+        first_turn_pins_knocked: -1,
+        second_turn_pins_knocked: -1,
         is_strike: false,
         is_spare: false,
     };
@@ -43,17 +43,17 @@ impl BowlingGame {
                 let is_strike = pins == 10;
                 let mut first_frame = new_empty_frame_history();
                 first_frame.is_strike = is_strike;
-                first_frame.first_turn_pins_knocked = pins as u8;
+                first_frame.first_turn_pins_knocked = pins as i8;
                 self.frame_hitory.push(first_frame);
                 if is_strike {
                     self.frame = self.frame + 1;
                 }
             } else {
                 self.frame_hitory[self.frame as usize].is_spare = true;
-                if self.frame_hitory[self.frame as usize].first_turn_pins_knocked + pins as u8 == 10 {
+                if self.frame_hitory[self.frame as usize].first_turn_pins_knocked + pins as i8 == 10 {
                     self.frame_hitory[self.frame as usize].is_spare = false;
                 }
-                self.frame_hitory[self.frame as usize].second_turn_pins_knocked = pins as u8;
+                self.frame_hitory[self.frame as usize].second_turn_pins_knocked = pins as i8;
                 self.frame = self.frame + 1;
             }
         }
