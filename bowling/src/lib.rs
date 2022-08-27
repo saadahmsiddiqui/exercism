@@ -122,6 +122,7 @@ impl BowlingGame {
         let mut score: u16 = 0;
 
         while frame <= GAME_FRAMES {
+            print_frame(&self.frame_history[frame]);
             if frame == GAME_FRAMES {
                 score = score +calculate_final_frame_score(&self.frame_history[frame]) as u16;
             } else {
@@ -141,7 +142,7 @@ impl BowlingGame {
                     score = score + 10;
                     let next_frame = frame + 1;
                     if next_frame <= GAME_FRAMES {
-                        score = score + self.frame_history[frame].first_turn_pins_knocked as u16;
+                        score = score + self.frame_history[next_frame].first_turn_pins_knocked as u16;
                     }
                 } else {
                     score = score + calculate_frame_score(&self.frame_history[frame]) as u16;
