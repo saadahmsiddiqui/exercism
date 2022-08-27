@@ -7,21 +7,41 @@ pub enum Error {
 struct FrameHistory {
     first_turn_pins_knocked: i8,
     second_turn_pins_knocked: i8,
-    is_spare: bool,
-    is_strike: bool,
+    third_turn_pins_knocked: i8,
 }
 
 fn new_empty_frame_history() -> FrameHistory {
     return FrameHistory {
         first_turn_pins_knocked: -1,
         second_turn_pins_knocked: -1,
-        is_strike: false,
-        is_spare: false,
+        third_turn_pins_knocked: -1,
     };
 }
 pub struct BowlingGame {
     frame: u8,
     frame_history: Vec<FrameHistory>,
+}
+
+const GAME_FRAMES: usize = 9;
+
+fn is_spare(frame: &FrameHistory) -> bool {
+    return frame.first_turn_pins_knocked + frame.second_turn_pins_knocked == 10;
+}
+
+fn is_strike(frame: &FrameHistory) -> bool {
+    return frame.first_turn_pins_knocked == 10;
+}
+
+fn calculate_frame_score(frame: &FrameHistory) -> u8 {
+    frame.first_turn_pins_knocked as u8 + frame.second_turn_pins_knocked as u8
+}
+
+fn calculate_final_frame_score(frame: &FrameHistory) -> u8 {
+    let mut score = frame.first_turn_pins_knocked as u8 + frame.second_turn_pins_knocked as u8;
+    if frame.third_turn_pins_knocked != -1 {
+        score = score + frame.third_turn_pins_knocked as u8;
+    }
+    score
 }
 
 impl BowlingGame {
@@ -37,55 +57,77 @@ impl BowlingGame {
             return Err(Error::InvalidNumberOfPins);
         }
 
-        if self.frame + 1 >= 10 {
+        if self.frame as usize > GAME_FRAMES {
             return Err(Error::GameComplete);
         }
 
-        if self.frame == 0 {
-            if self.frame_history.len() == 0 {
-                let is_strike = pins == 10;
-                let mut first_frame = new_empty_frame_history();
-                first_frame.is_strike = is_strike;
-                first_frame.first_turn_pins_knocked = pins as i8;
-                self.frame_history.push(first_frame);
-                if is_strike {
+        let frame_exists = match self.frame_history.get(self.frame as usize) {
+            Some(_frame) => true,
+            None => false,
+        };
+
+        if frame_exists == true {
+            if self.frame as usize == GAME_FRAMES {
+                if self.frame_history[self.frame as usize].second_turn_pins_knocked == -1 {
+                    self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
+                }
+                if is_strike(&self.frame_history[self.frame as usize]) || is_spare(&self.frame_history[self.frame as usize]) {
+                    if self.frame_history[self.frame as usize].third_turn_pins_knocked == -1 {
+                        self.frame_history[self.frame as usize].third_turn_pins_knocked = pins as i8;
+                        self.frame = self.frame + 1;
+                    }
+                } else {
                     self.frame = self.frame + 1;
                 }
             } else {
-                self.frame_history[self.frame as usize].is_spare = false;
-                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8
-                    == 10
-                {
-                    self.frame_history[self.frame as usize].is_spare = true;
+                if self.frame_history[self.frame as usize].second_turn_pins_knocked == -1 {
+                    self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
+                    self.frame = self.frame + 1;
                 }
-                self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
-                self.frame = self.frame + 1;
             }
         } else {
-            let last_frame = (self.frame - 1) as usize;
-            let is_complete_last_frame =
-                self.frame_history[last_frame].second_turn_pins_knocked != -1;
-            if is_complete_last_frame {
-                let mut new_current_frame = new_empty_frame_history();
-                new_current_frame.is_strike = pins == 10;
-                new_current_frame.is_spare = false;
-                new_current_frame.first_turn_pins_knocked = pins as i8;
-                self.frame_history[self.frame as usize] = new_current_frame;
-            } else {
-                self.frame_history[self.frame as usize].is_spare = false;
-                if self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8
-                    == 10
-                {
-                    self.frame_history[self.frame as usize].is_spare = true;
-                }
-                self.frame_history[self.frame as usize].second_turn_pins_knocked = pins as i8;
+            let mut new_frame = new_empty_frame_history();
+            new_frame.first_turn_pins_knocked = pins as i8;
+            self.frame_history.push(new_frame);
+            if pins == 10 {
                 self.frame = self.frame + 1;
             }
         }
-        unimplemented!("Return the score if the game is complete, or None if not.");
+
+        Ok(())
     }
 
     pub fn score(&self) -> Option<u16> {
-        unimplemented!("Return the score if the game is complete, or None if not.");
+        let mut frame = 0;
+        let mut score: u16 = 0;
+
+        while frame <= GAME_FRAMES {
+            if frame == GAME_FRAMES {
+                score = calculate_final_frame_score(&self.frame_history[frame]) as u16;
+            } else {
+                if is_strike(&self.frame_history[frame]) {
+                    score = score + 10;
+
+                    if frame + 2 <= GAME_FRAMES {
+                        score = score + calculate_frame_score(&self.frame_history[frame + 1]) as u16;
+                        score = score + calculate_frame_score(&self.frame_history[frame + 2]) as u16;
+                    } else {
+                        score = score + calculate_frame_score(&self.frame_history[frame + 1]) as u16;
+                    }
+                } else if is_spare(&self.frame_history[frame]) {
+                    score = score + 10;
+                    let next_frame = frame + 1;
+                    if next_frame <= GAME_FRAMES {
+                        score = score + self.frame_history[frame].first_turn_pins_knocked as u16;
+                    }
+                } else {
+                    score = calculate_frame_score(&self.frame_history[frame]) as u16;
+                }
+            }
+
+            frame = frame + 1;
+        }
+
+        Some(score)
     }
 }
