@@ -66,6 +66,10 @@ impl BowlingGame {
             None => false,
         };
 
+        if frame_exists && &self.frame_history[self.frame as usize].first_turn_pins_knocked + pins as i8 > 10 {
+            return Err(Error::NotEnoughPinsLeft);
+        }
+
         if frame_exists == true {
             if self.frame as usize == GAME_FRAMES {
                 if self.frame_history[self.frame as usize].second_turn_pins_knocked == -1 {
