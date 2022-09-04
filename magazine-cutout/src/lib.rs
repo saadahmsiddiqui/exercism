@@ -23,7 +23,6 @@ pub fn can_construct_note(magazine: &Vec<&str>, note: &Vec<&str>) -> bool {
         match megazine_map.get_key_value(&note_w) {
             Some(key_match) => {
                 let (_word, count) = key_match;
-
                 if *count == 0 {
                     remove_key = true;
                 } else {
