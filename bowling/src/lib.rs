@@ -26,7 +26,7 @@ const GAME_FRAMES: usize = 9;
 const GAME_PINS: u16 = 10;
 
 fn is_spare(frame: &FrameHistory) -> bool {
-    frame.frame_throws[0] + frame.frame_throws[1] == GAME_PINS
+    frame.frame_throws[0] != GAME_PINS && frame.frame_throws[0] + frame.frame_throws[1] == GAME_PINS
 }
 
 fn is_strike(frame: &FrameHistory) -> bool {
@@ -80,7 +80,7 @@ impl BowlingGame {
                     self.final_frame.throw_index = self.final_frame.throw_index + 1;
                 }
                 1 => {
-                    if self.final_frame.frame_throws[1] + self.final_frame.frame_throws[0] > 10 {
+                    if self.final_frame.frame_throws[0] < 10 && pins + self.final_frame.frame_throws[0] > 10 {
                         return Err(Error::NotEnoughPinsLeft);
                     }
 
@@ -118,10 +118,9 @@ impl BowlingGame {
                 if pins == GAME_PINS {
                     self.current_frame = self.current_frame + 1;
                 }
-            }
-            if throw_index == 1 {
+            } else if throw_index == 1 {
                 if self.frame_history[frame].frame_throws[0]
-                    + self.frame_history[frame].frame_throws[1]
+                    + pins
                     > 10
                 {
                     return Err(Error::NotEnoughPinsLeft);
@@ -136,6 +135,10 @@ impl BowlingGame {
 
     pub fn score(&self) -> Option<u16> {
         if self.frame_history[0].throw_index == 0 {
+            return None;
+        }
+
+        if self.current_frame == GAME_FRAMES && self.final_frame.throw_index <= 1 {
             return None;
         }
 
