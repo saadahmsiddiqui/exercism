@@ -80,7 +80,9 @@ impl BowlingGame {
                     self.final_frame.throw_index = self.final_frame.throw_index + 1;
                 }
                 1 => {
-                    if self.final_frame.frame_throws[0] < 10 && pins + self.final_frame.frame_throws[0] > 10 {
+                    if self.final_frame.frame_throws[0] < 10
+                        && pins + self.final_frame.frame_throws[0] > 10
+                    {
                         return Err(Error::NotEnoughPinsLeft);
                     }
 
@@ -99,6 +101,13 @@ impl BowlingGame {
                 }
                 2 => {
                     if self.final_frame.third_throw_allowed {
+                        if self.final_frame.frame_throws[0] == GAME_PINS
+                            && self.final_frame.frame_throws[1] < GAME_PINS
+                            && self.final_frame.frame_throws[1] + pins > 10
+                        {
+                            return Err(Error::NotEnoughPinsLeft);
+                        }
+
                         self.final_frame.frame_throws[throw_index] = pins;
                     }
                     self.final_frame.throw_index = self.final_frame.throw_index + 1;
@@ -119,10 +128,7 @@ impl BowlingGame {
                     self.current_frame = self.current_frame + 1;
                 }
             } else if throw_index == 1 {
-                if self.frame_history[frame].frame_throws[0]
-                    + pins
-                    > 10
-                {
+                if self.frame_history[frame].frame_throws[0] + pins > 10 {
                     return Err(Error::NotEnoughPinsLeft);
                 }
 
@@ -134,12 +140,18 @@ impl BowlingGame {
     }
 
     pub fn score(&self) -> Option<u16> {
-        if self.frame_history[0].throw_index == 0 {
+        if self.current_frame < GAME_FRAMES {
             return None;
         }
 
-        if self.current_frame == GAME_FRAMES && self.final_frame.throw_index <= 1 {
-            return None;
+        if self.current_frame == GAME_FRAMES {
+            if self.final_frame.third_throw_allowed {
+                if self.final_frame.throw_index < 3 {
+                    return None;
+                }
+            } else if !self.final_frame.third_throw_allowed && self.final_frame.throw_index < 2 {
+                return None;
+            }
         }
 
         let mut score: u16 = 0;
