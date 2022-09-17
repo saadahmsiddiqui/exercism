@@ -183,10 +183,20 @@ impl BowlingGame {
                         + self.final_frame.frame_throws[0]
                         + self.final_frame.frame_throws[1];
                 } else {
-                    score = score
-                        + this_frame_score
-                        + calculate_frame_score(&self.frame_history[i + 1])
-                        + calculate_frame_score(&self.frame_history[i + 2]);
+                    let score_to_add;
+                    if is_strike(&self.frame_history[i + 1]) {
+                        let is_next_strike = is_strike(&self.frame_history[i + 2]);
+                        if is_next_strike {
+                            score_to_add = GAME_PINS * 2;
+                        } else {
+                            score_to_add = GAME_PINS + &self.frame_history[i + 2].frame_throws[0];
+                        }
+                    } else {
+                        score_to_add = &self.frame_history[i + 1].frame_throws[0]
+                            + &self.frame_history[i + 1].frame_throws[1];
+                    }
+
+                    score = score + this_frame_score + score_to_add;
                 }
             } else {
                 score = score + calculate_frame_score(&self.frame_history[i]);
