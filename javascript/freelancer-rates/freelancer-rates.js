@@ -52,8 +52,12 @@ export function daysInBudget(budget, ratePerHour) {
  */
 export function priceWithMonthlyDiscount(ratePerHour, numDays, discount) {
   const extraDays = numDays % BILLABLE_DAYS;
-  const _dayRate = dayRate(ratePerHour);
-  const discountedRate = _dayRate - _dayRate * discount;
-  const costOnDiscountedDays = parseFloat(discountedRate.toFixed(4)) * (numDays - extraDays);
-  return Math.round(costOnDiscountedDays + Math.ceil(extraDays * _dayRate))
+  const dailyRate = dayRate(ratePerHour);
+
+  const costOnDiscountedDays = applyDiscount(dailyRate, discount) * (numDays - extraDays);
+  return Math.round(costOnDiscountedDays + Math.ceil(extraDays * dailyRate))
+}
+
+export function applyDiscount(dailyRate, discount) {
+  return dailyRate - (dailyRate * discount)
 }
