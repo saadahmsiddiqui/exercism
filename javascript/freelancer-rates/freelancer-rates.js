@@ -54,8 +54,8 @@ export function priceWithMonthlyDiscount(ratePerHour, numDays, discount) {
   const extraDays = numDays % BILLABLE_DAYS;
   const dailyRate = dayRate(ratePerHour);
 
-  const costOnDiscountedDays = applyDiscount(dailyRate, discount) * (numDays - extraDays);
-  return Math.round(costOnDiscountedDays + Math.ceil(extraDays * dailyRate))
+  const costOnDiscountedDays = Math.ceil(applyDiscount(dailyRate, discount) * (numDays - extraDays));
+  return Math.ceil(costOnDiscountedDays + (extraDays * dailyRate))
 }
 
 export function applyDiscount(dailyRate, discount) {
