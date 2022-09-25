@@ -13,9 +13,7 @@ fn perform_calculation(operator: &CalculatorInput, val_one: i32, val_two: i32) -
         CalculatorInput::Subtract => val_one - val_two,
         CalculatorInput::Multiply => val_one * val_two,
         CalculatorInput::Divide => val_one / val_two,
-        _ => {
-            panic!("Invalid Operation");
-        }
+        _ => panic!("Invalid Operation")
     };
 }
 
