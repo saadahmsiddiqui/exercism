@@ -13,7 +13,14 @@ fn perform_calculation(operator: &CalculatorInput, val_one: i32, val_two: i32) -
         CalculatorInput::Subtract => val_one - val_two,
         CalculatorInput::Multiply => val_one * val_two,
         CalculatorInput::Divide => val_one / val_two,
-        _ => panic!("Invalid Operation")
+        _ => panic!("Invalid Operation"),
+    };
+}
+
+fn is_value(input: &CalculatorInput) -> Option<i32> {
+    return match input {
+        CalculatorInput::Value(x) => Some(*x),
+        _ => None,
     };
 }
 
@@ -26,23 +33,18 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
                 op_stack.push(CalculatorInput::Value(*x));
             }
             _ => {
-                let val_two = op_stack.pop().unwrap();
-                let val_one = op_stack.pop().unwrap();
+                let val_two = is_value(&op_stack.pop().unwrap());
+                let val_one = is_value(&op_stack.pop().unwrap());
 
-                match val_one {
-                    CalculatorInput::Value(v1) => match val_two {
-                        CalculatorInput::Value(v2) => {
-                            op_stack
-                                .push(CalculatorInput::Value(perform_calculation(&input, v1, v2)));
-                        }
-                        _ => {
-                            panic!("Incorrect State")
-                        }
-                    },
-                    _ => {
-                        panic!("Incorrect State")
-                    }
+                if val_one == None || val_one == None {
+                    return val_one;
                 }
+
+                op_stack.push(CalculatorInput::Value(perform_calculation(
+                    &input,
+                    val_one.unwrap(),
+                    val_two.unwrap(),
+                )))
             }
         }
     }
