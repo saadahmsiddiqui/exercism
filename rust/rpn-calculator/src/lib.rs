@@ -28,8 +28,8 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
                 op_stack.push(CalculatorInput::Value(*x));
             }
             _ => {
-                let val_one = op_stack.pop().unwrap();
                 let val_two = op_stack.pop().unwrap();
+                let val_one = op_stack.pop().unwrap();
 
                 match val_one {
                     CalculatorInput::Value(v1) => match val_two {
