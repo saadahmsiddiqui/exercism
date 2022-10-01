@@ -52,6 +52,10 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
         }
     }
 
+    if op_stack.len() > 1 {
+        return None;
+    }
+
     let potential_result = op_stack.pop().unwrap();
     return match potential_result {
         CalculatorInput::Value(val) => Some(val),
