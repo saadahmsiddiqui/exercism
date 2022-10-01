@@ -52,7 +52,7 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
         }
     }
 
-    if op_stack.len() > 1 {
+    if op_stack.len() != 1 {
         return None;
     }
 
