@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum CalculatorInput {
     Add,
     Subtract,
@@ -33,12 +33,15 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
                 op_stack.push(CalculatorInput::Value(*x));
             }
             _ => {
-                let val_two = is_value(&op_stack.pop().unwrap());
-                let val_one = is_value(&op_stack.pop().unwrap());
+                let val_two = op_stack.pop();
+                let val_one = op_stack.pop();
 
-                if val_one == None || val_one == None {
-                    return val_one;
+                if val_one == None || val_two == None {
+                    return None;
                 }
+
+                let val_one = is_value(&val_one.unwrap());
+                let val_two = is_value(&val_two.unwrap());
 
                 op_stack.push(CalculatorInput::Value(perform_calculation(
                     &input,
