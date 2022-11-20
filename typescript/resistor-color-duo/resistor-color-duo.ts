@@ -32,5 +32,5 @@ export function decodedValue(colors: string[]): number {
     resistance += colorResistance(color);
   }
 
-  return Number(resistance)
+  return Number(resistance.slice(0, 2))
 }
