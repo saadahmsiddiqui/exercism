@@ -11,14 +11,28 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
             continue;
         }
 
-        let mut all_match = true;
-        for ch in anagram_chars.iter() {
-            if !word_chars.contains(&ch) {
-                all_match = false;
+        if word_chars.len() == anagram_chars.len() {
+            let mut all_match = true;
+
+            for i in 0..word_chars.len() {
+                if word_chars.get(i) != anagram_chars.get(i) {
+                    all_match = false;
+                }
+            }
+
+            if all_match {
+                continue;
             }
         }
 
-        if all_match {
+        let mut all_exist = true;
+        for ch in anagram_chars.iter() {
+            if !word_chars.contains(&ch) {
+                all_exist = false;
+            }
+        }
+
+        if all_exist {
             anagrams.insert(anagram.clone());
         }
     }
