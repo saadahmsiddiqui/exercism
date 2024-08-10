@@ -5,6 +5,10 @@ const FINE: &str = "Fine. Be that way!";
 const WHATEVER: &str = "Whatever.";
 
 pub fn reply(message: &str) -> &str {
+    if message.len() == 0 {
+        return FINE;
+    }
+
     let is_question = message.trim_ascii_end().ends_with("?");
     let mut uppercase = 0;
     let mut lowercase = 0;
@@ -27,9 +31,6 @@ pub fn reply(message: &str) -> &str {
         }
     });
 
-    if message.len() == 0 {
-        return FINE;
-    }
 
     if is_question {
         if uppercase > 0 {
