@@ -1,9 +1,5 @@
-pub fn squareRoot(radicand: usize) usize {
-    for (1..radicand + 1) |x| {
-        if (x * x == radicand) {
-            return x;
-        }
-    }
+const std = @import("std");
 
-    return 0;
+pub fn squareRoot(radicand: usize) usize {
+    return std.math.sqrt(radicand);
 }
