@@ -51,12 +51,8 @@ func CountAll(cb Chessboard) int {
 func CountOccupied(cb Chessboard) int {
 	occupied := 0
 
-	for _, file := range cb {
-		for _, val := range file {
-			if val {
-				occupied += 1
-			}
-		}
+	for k, _ := range cb {
+		occupied += CountInFile(cb, k)
 	}
 
 	return occupied
